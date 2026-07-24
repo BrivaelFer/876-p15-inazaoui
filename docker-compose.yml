@@ -1,0 +1,43 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ina_app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "9003:9003"
+    command: ["sh", "-lc", "if [ -d /var/www/html/bin ]; then find /var/www/html/bin -type f -exec dos2unix {} + 2>/dev/null || true; fi && chown -R www-data:www-data /var/www/html && chmod -R 775 /var/www/html && exec apache2-foreground"]
+    volumes:
+      - .:/var/www/html
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+    environment:
+      - APP_ENV=dev
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/ina_zaoui?serverVersion=16&charset=utf8
+    depends_on:
+      - db
+    networks:
+      - symfony_network
+
+  db:
+    image: postgres:15-alpine
+    container_name: ina_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=ina_zaoui
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - symfony_network
+
+volumes:
+  postgres_data:
+
+networks:
+  symfony_network:
+    driver: bridge
