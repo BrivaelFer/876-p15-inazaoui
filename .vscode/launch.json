@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Listen for Xdebug (Docker)",
+            "name": "Listen for Docker",
             "type": "php",
             "request": "launch",
             "port": 9003,
@@ -17,8 +17,12 @@
                 "max_data": 1024,
                 "max_depth": 5
             }
+        },
+        {
+            "name": "Listen for symfony server",
+            "type": "php",
+            "request": "launch",
+            "port": 9003
         }
-        
-        
     ]
 }
