@@ -19,17 +19,12 @@ class UserService
 
     public function findUsersToIndex(int $page): array
     {
-        return $this->userRepository->findBy(
-            [],
-            ['id' => 'ASC'],
-            25,
-            25 * ($page - 1)
-        );
+        return $this->userRepository->findActiveUsers($page, 25);
     }
 
     public function usersCount(): int
     {
-        return $this->userRepository->count();
+        return $this->userRepository->count() - 1;
     }
 
     public function addUser(User $user): void

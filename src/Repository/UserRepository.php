@@ -46,9 +46,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      *
      * @return User[]
      */
-    public function findActiveUsers(): array
+    public function findActiveUsers(?int $page = null, ?int $pageSize = null): array
     {
-        $users = $this->findAll();
+        $offset = ($pageSize !== null) ? $pageSize * (($page ?? 1) - 1) : null;
+        $users = $this->findBy(
+            [], 
+            ['id' => 'ASC'],
+            $pageSize,
+            $offset
+        );
 
         foreach($users as $key=>$user) {
             if($user->hasRole('ROLE_ADMIN') || !$user->hasRole('ROLE_ACTIVE_USER')) {
