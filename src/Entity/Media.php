@@ -22,10 +22,10 @@ class Media
     private ?Album $album = null;
 
     #[ORM\Column]
-    private string $path;
+    private ?string $path = null;
 
     #[ORM\Column]
-    private string $title;
+    private ?string $title = null;
 
     #[Assert\Image]
     #[Assert\File(maxSize:'2M')]

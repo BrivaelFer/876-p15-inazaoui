@@ -18,13 +18,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    private bool $admin = false;
-
     #[ORM\Column]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $description;
+    private ?string $description = null;
 
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
@@ -90,16 +88,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->medias = $medias;
     }
 
-    public function isAdmin(): bool
-    {
-        return $this->admin;
-    }
-
-    public function setAdmin(bool $admin): void
-    {
-        $this->admin = $admin;
-    }
-
     public function getPassword(): ?string
     {
         return $this->password;
@@ -125,6 +113,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): void
     {
         $this->roles = $roles;
+    }
+
+    public function addRole(string $role): void
+    {
+        $this->roles[] = $role;
+    }
+
+    public function removeRole(string $role): void
+    {
+        foreach($this->roles as $key=>$val) {
+            if ($role === $val) {
+                unset($this->roles[$key]);
+                return;
+            }
+        }
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->getRoles(), true);
     }
 
     #[\Deprecated]

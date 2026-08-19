@@ -30,16 +30,19 @@ class HomeController extends AbstractController
     #[Route("/guests", name: "guests")]
     public function guests()
     {
-        $guests = $this->userRepository->findBy(['admin' => false]);
+        $guests = $this->userRepository->findActiveUsers();
         return $this->render('front/guests.html.twig', [
             'guests' => $guests
         ]);
     }
 
     #[Route("/guest/{id}", name: "guest")]
-    public function guest(int $id)
+    public function guest(User $guest)
     {
-        $guest = $this->userRepository->find($id);
+        if(!$guest->hasRole('ROLE_ACTIVE_USER')) {
+            return $this->redirectToRoute('guests');
+        }
+
         return $this->render('front/guest.html.twig', [
             'guest' => $guest
         ]);
@@ -50,11 +53,11 @@ class HomeController extends AbstractController
     {
         $albums = $this->albumRepository->findAll();
         $album = $id ? $this->albumRepository->find($id) : null;
-        $user = $this->userRepository->findOneBy(['admin' => true]);
+        $user = $this->userRepository->findOneBy(['email' => 'ina@zaoui.com']);
 
         $medias = $album
             ? $this->mediaRepository->findBy(['album' => $album])
-            : $this->mediaRepository->findBy(['user' => $user]);
+            : $user->getMedias();
         return $this->render('front/portfolio.html.twig', [
             'albums' => $albums,
             'album' => $album,

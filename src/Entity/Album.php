@@ -14,7 +14,7 @@ class Album
     private ?int $id = null;
 
     #[ORM\Column]
-    private string $name;
+    private ?string $name = null;
 
     public function getId(): ?int
     {

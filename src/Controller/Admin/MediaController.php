@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Media;
 use App\Form\MediaType;
 use App\Repository\MediaRepository;
+use App\Service\MediaService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +16,8 @@ class MediaController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManagerInterface,
-        private MediaRepository $mediaRepository
+        private MediaRepository $mediaRepository,
+        private MediaService $mediaService
     )
     {
     }
@@ -37,7 +39,7 @@ class MediaController extends AbstractController
             25,
             25 * ($page - 1)
         );
-        $total = $this->mediaRepository->count();
+        $total = $this->mediaRepository->count($criteria);
 
         return $this->render('admin/media/index.html.twig', [
             'medias' => $medias,
@@ -70,12 +72,9 @@ class MediaController extends AbstractController
 
     #[Route("/admin/media/delete/{id}", name: "admin_media_delete")]
     #[IsGranted('ROLE_ADMIN')]
-    public function delete(int $id)
+    public function delete(Media $media)
     {
-        $media = $this->mediaRepository->find($id);
-        $this->entityManagerInterface->remove($media);
-        $this->entityManagerInterface->flush();
-        unlink($media->getPath());
+        $this->mediaService->deleteMedia($media);
 
         return $this->redirectToRoute('admin_media_index');
     }
