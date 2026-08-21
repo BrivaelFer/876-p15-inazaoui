@@ -16,7 +16,6 @@ class MediaController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManagerInterface,
-        private MediaRepository $mediaRepository,
         private MediaService $mediaService
     )
     {
@@ -33,13 +32,9 @@ class MediaController extends AbstractController
             $criteria['user'] = $this->getUser();
         }
 
-        $medias = $this->mediaRepository->findBy(
-            $criteria,
-            ['id' => 'ASC'],
-            25,
-            25 * ($page - 1)
-        );
-        $total = $this->mediaRepository->count($criteria);
+        $medias = $this->mediaService->findIndexMedias($page, $criteria);
+
+        $total = $this->mediaService->mediasCount($criteria);
 
         return $this->render('admin/media/index.html.twig', [
             'medias' => $medias,
@@ -56,13 +51,10 @@ class MediaController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->isGranted('ROLE_ADMIN')) {
-                $media->setUser($this->getUser());
-            }
-            $media->setPath('uploads/' . md5(uniqid()) . '.' . $media->getFile()->guessExtension());
-            $media->getFile()->move('uploads/', $media->getPath());
-            $this->entityManagerInterface->persist($media);
-            $this->entityManagerInterface->flush();
+            $this->mediaService->addMedia(
+                $media,
+                !$this->isGranted('ROLE_ADMIN') ? $this->getUser() : null
+            );
 
             return $this->redirectToRoute('admin_media_index');
         }
