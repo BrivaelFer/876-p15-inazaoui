@@ -29,3 +29,8 @@ services:
     App\Service\MediaService:
         arguments:
             $uploadFolder: '%env(IMG_UPLOAD_FOLDER)%'
+
+    App\DataFixtures\MediaFixtures:
+        arguments:
+            $uploadFolder: '%env(IMG_UPLOAD_FOLDER)%'
+            $projectDir: '%kernel.project_dir%'
