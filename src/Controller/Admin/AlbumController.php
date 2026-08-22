@@ -7,6 +7,7 @@ use App\Entity\Media;
 use App\Form\AlbumType;
 use App\Form\MediaType;
 use App\Repository\AlbumRepository;
+use App\Service\AlbumService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,8 @@ class AlbumController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManagerInterface,
-        private AlbumRepository $albumRepository
+        private AlbumRepository $albumRepository,
+        private AlbumService $albumService
     )
     {
         
@@ -50,9 +52,8 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/admin/album/update/{id}", name: "admin_album_update")]
-    public function update(Request $request, int $id)
+    public function update(Request $request, Album $album)
     {
-        $album = $this->albumRepository->find($id);
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
 
@@ -66,11 +67,9 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/admin/album/delete/{id}", name: "admin_album_delete")]
-    public function delete(int $id)
+    public function delete(Album $album)
     {
-        $media = $this->albumRepository->find($id);
-        $this->entityManagerInterface->remove($media);
-        $this->entityManagerInterface->flush();
+        $this->albumService->deleteAlbum($album);
 
         return $this->redirectToRoute('admin_album_index');
     }
