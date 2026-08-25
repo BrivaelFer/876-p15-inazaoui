@@ -63,10 +63,12 @@ class MediaController extends AbstractController
     }
 
     #[Route("/admin/media/delete/{id}", name: "admin_media_delete")]
-    #[IsGranted('ROLE_ADMIN')]
     public function delete(Media $media)
     {
-        $this->mediaService->deleteMedia($media);
+        $user = $this->getUser();
+        if($this->isGranted('ROLE_ADMIN') || $user->getUserIdentifier() === $media->getUser()->getUserIdentifier()) {
+            $this->mediaService->deleteMedia($media);
+        }
 
         return $this->redirectToRoute('admin_media_index');
     }
