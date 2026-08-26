@@ -46,7 +46,7 @@ class Media
         $this->user = $user;
     }
 
-    public function getPath(): string
+    public function getPath(): ?string
     {
         return $this->path;
     }
@@ -56,7 +56,7 @@ class Media
         $this->path = $path;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
