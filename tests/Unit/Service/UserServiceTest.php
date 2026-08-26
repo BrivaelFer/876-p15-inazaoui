@@ -45,8 +45,13 @@ class UserServiceTest extends TestCase
     {
         $this->userRepository
             ->expects($this->once())
-            ->method('findActiveUsers')
-            ->with($page, 25)
+            ->method('findBy')
+            ->with(
+                [], 
+                ['id' => 'ASC'],
+                25,
+                25 * ($page - 1)
+            )
             ->willReturn($users);
 
         self::assertSame($users, $this->userService->findUsersToIndex($page));
@@ -56,7 +61,7 @@ class UserServiceTest extends TestCase
     {
         $this->userRepository->expects($this->once())->method('count')->willReturn(4);
 
-        self::assertSame(3, $this->userService->usersCount());
+        self::assertSame(4, $this->userService->usersCount());
     }
 
     #[DataProvider('addUserProvider')]

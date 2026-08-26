@@ -19,12 +19,25 @@ class UserService
 
     public function findUsersToIndex(int $page): array
     {
-        return $this->userRepository->findActiveUsers($page, 25);
+        $offset = 25 * ($page - 1);
+        $users = $this->userRepository->findBy(
+            [], 
+            ['id' => 'ASC'],
+            25,
+            $offset
+        );
+        foreach($users as $key => $user) {
+            if ($user->hasRole('ROLE_ADMIN')) {
+                unset($users[$key]);
+                break;
+            }
+        }
+        return $users;
     }
 
     public function usersCount(): int
     {
-        return $this->userRepository->count() - 1;
+        return $this->userRepository->count();
     }
 
     public function addUser(User $user): void
