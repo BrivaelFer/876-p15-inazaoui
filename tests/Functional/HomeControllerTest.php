@@ -80,6 +80,9 @@ class HomeControllerTest extends WebTestCase
         self::assertCount($expectedMediaCount, $this->client->getCrawler()->filter('.media'));
     }
 
+    /**
+     * @return array<string, string[]>
+     */
     public static function staticPageProvider(): array
     {
         return [
@@ -88,6 +91,9 @@ class HomeControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string, array<string|bool>>
+     */
      public static function guestPageProvider(): array
     {
         return [
@@ -96,6 +102,9 @@ class HomeControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string, array{?int, int}>
+     */
     public static function portfolioProvider(): array
     {
         return [
@@ -104,6 +113,9 @@ class HomeControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string, array{int, string, string}>
+     */
     public static function guestsPageProvider(): array
     {
         return [

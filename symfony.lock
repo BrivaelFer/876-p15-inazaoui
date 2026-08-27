@@ -47,6 +47,9 @@
             "migrations/.gitignore"
         ]
     },
+    "phpstan/phpstan": {
+        "version": "1.12.34"
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {

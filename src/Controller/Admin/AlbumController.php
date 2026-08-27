@@ -11,6 +11,7 @@ use App\Service\AlbumService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -27,7 +28,7 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/admin/album", name: "admin_album_index")]
-    public function index()
+    public function index(): Response
     {
         $albums = $this->albumRepository->findAll();
 
@@ -35,7 +36,7 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/admin/album/add", name: "admin_album_add")]
-    public function add(Request $request)
+    public function add(Request $request): Response
     {
         $album = new Album();
         $form = $this->createForm(AlbumType::class, $album);
@@ -52,7 +53,7 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/admin/album/update/{id}", name: "admin_album_update")]
-    public function update(Request $request, Album $album)
+    public function update(Request $request, Album $album): Response
     {
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
@@ -67,7 +68,7 @@ class AlbumController extends AbstractController
     }
 
     #[Route("/admin/album/delete/{id}", name: "admin_album_delete")]
-    public function delete(Album $album)
+    public function delete(Album $album): Response
     {
         $this->albumService->deleteAlbum($album);
 

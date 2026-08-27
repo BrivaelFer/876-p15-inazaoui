@@ -42,6 +42,12 @@ Ajouter ou mettre à jour les tests concernés par toute modification de comport
 docker compose exec app composer db-test
 docker compose exec app php bin/phpunit
 ```
+Pour générer un rapport de tests:
+
+```bash
+docker compose exec app XDEBUG_MODE=coverage php vendor/bin/phpunit --coverage-html var/coverage
+```
+Veuillez un taux de couverture suppérieur à 70%.
 
 ### Documentation
 

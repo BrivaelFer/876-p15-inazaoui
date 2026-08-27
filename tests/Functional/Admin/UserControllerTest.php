@@ -98,6 +98,9 @@ class UserControllerTest extends WebTestCase
 
     
 
+    /**
+     * @param array<string> $initialRoles
+     */
     #[DataProvider('userStatusProvider')]
     public function testUserStatusAction(
         string $action,
@@ -117,7 +120,9 @@ class UserControllerTest extends WebTestCase
     }
 
    
-
+    /**
+     * @param array<string> $initialRoles
+     */
     #[DataProvider('deleteUserRedirectsToIndexAndRemovesUserDataProvider')]
     public function testDeleteUserRedirectsToIndexAndRemovesUser(string $suffix, array $initialRoles): void
     {
@@ -132,6 +137,9 @@ class UserControllerTest extends WebTestCase
 
     
 
+    /**
+     * @param array<string> $roles
+     */
     private function createUser(string $suffix, array $roles): User
     {
         $user = new User();
@@ -146,6 +154,9 @@ class UserControllerTest extends WebTestCase
         return $user;
     }
 
+    /**
+     * @return array<string, array{string, bool}>
+     */
     public static function userControllerRoutesProvider(): array
     {
         return [
@@ -157,6 +168,9 @@ class UserControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string, array<string>>
+     */
     public static function addUserWithValidDataRedirectsToIndexDataProvider(): array
     {
         return [
@@ -169,6 +183,9 @@ class UserControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string, array{string, array<string>, bool}>
+     */
     public static function userStatusProvider(): array
     {
         return [
@@ -177,6 +194,9 @@ class UserControllerTest extends WebTestCase
         ];
     }
     
+    /**
+     * @return array<string, array{string, array<string>}>
+     */
     public static function deleteUserRedirectsToIndexAndRemovesUserDataProvider(): array
     {
         return [

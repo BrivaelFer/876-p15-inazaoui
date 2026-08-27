@@ -17,6 +17,10 @@ class UserService
         private MediaService $mediaService
     ) {}
 
+    /**
+     * @param int $page
+     * @return User[]
+     */
     public function findUsersToIndex(int $page): array
     {
         $offset = 25 * ($page - 1);

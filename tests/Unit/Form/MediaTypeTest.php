@@ -53,6 +53,9 @@ class MediaTypeTest extends KernelTestCase
         self::assertFalse($config->getOption('required'));
     }
 
+    /**
+     * @return array{file: string[], title: string[]}
+     */
     public static function baseFieldProvider(): array
     {
         return [
@@ -61,6 +64,9 @@ class MediaTypeTest extends KernelTestCase
         ];
     }
 
+    /**
+     * @return array{album: string[], user: string[]}
+     */
     public static function adminFieldProvider(): array
     {
         return [

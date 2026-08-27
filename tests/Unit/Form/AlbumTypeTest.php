@@ -29,6 +29,9 @@ class AlbumTypeTest extends KernelTestCase
         self::assertSame($label, $form->get($field)->getConfig()->getOption('label'));
     }
 
+    /**
+     * @return array<string, array<string>>
+     */
     public static function fieldProvider(): array
     {
         return [

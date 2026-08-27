@@ -15,6 +15,11 @@ class MediaService
         private string $uploadFolder
     ) {}
 
+    /**
+     * @param int $page
+     * @param array<string, mixed> $criteria
+     * @return Media[]
+     */
     public function findIndexMedias(int $page, array $criteria): array
     {
         return $this->mediaRepository->findBy(
@@ -25,6 +30,10 @@ class MediaService
         );
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     * @return int
+     */
     public function mediasCount(array $criteria): int
     {
         return $this->mediaRepository->count($criteria);

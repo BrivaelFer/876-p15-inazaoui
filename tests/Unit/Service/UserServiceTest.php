@@ -40,11 +40,14 @@ class UserServiceTest extends TestCase
 
     #region Tests
 
+    /**
+     * @param User[] $users
+     */
     #[DataProvider('findUsersToIndexProvider')]
     public function testFindUsersToIndex(int $page, array $users): void
     {
         $this->userRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('findBy')
             ->with(
                 [], 
@@ -59,7 +62,7 @@ class UserServiceTest extends TestCase
 
     public function testUsersCountExcludesTheAdminUser(): void
     {
-        $this->userRepository->expects($this->once())->method('count')->willReturn(4);
+        $this->userRepository->expects(self::once())->method('count')->willReturn(4);
 
         self::assertSame(4, $this->userService->usersCount());
     }
@@ -70,12 +73,12 @@ class UserServiceTest extends TestCase
         $user = (new User())->setPassword($password);
 
         $this->hasher
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('hashPassword')
             ->with($user, $password)
             ->willReturn($hashedPassword);
-        $this->entityManager->expects($this->once())->method('persist')->with($user);
-        $this->entityManager->expects($this->once())->method('flush');
+        $this->entityManager->expects(self::once())->method('persist')->with($user);
+        $this->entityManager->expects(self::once())->method('flush');
 
         $this->userService->addUser($user);
 
@@ -86,19 +89,22 @@ class UserServiceTest extends TestCase
     public function testDeleteUserDataDeletesUserMediaWithoutFlushingThenDeletesUser(): void
     {
         $user = new User();
-        $media = $this->createMock(Media::class);
+        $media = new Media();
         $user->setMedias(new ArrayCollection([$media]));
 
         $this->mediaService
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('deleteMedia')
             ->with($media, false);
-        $this->entityManager->expects($this->once())->method('remove')->with($user);
-        $this->entityManager->expects($this->once())->method('flush');
+        $this->entityManager->expects(self::once())->method('remove')->with($user);
+        $this->entityManager->expects(self::once())->method('flush');
 
         $this->userService->deleteUserData($user);
     }
 
+    /**
+     * @param string[] $roles
+     */
     #[DataProvider('deactivateUserProvider')]
     public function testDeactivateUserOnlyChangesActiveNonAdminUsers(
         array $roles,
@@ -110,11 +116,11 @@ class UserServiceTest extends TestCase
         $user->setRoles($roles);
 
         $this->entityManager
-            ->expects($shouldDeactivate ? $this->once() : $this->never())
+            ->expects($shouldDeactivate ? self::once() : self::never())
             ->method('persist')
             ->with($user);
         $this->entityManager
-            ->expects($shouldDeactivate ? $this->once() : $this->never())
+            ->expects($shouldDeactivate ? self::once() : self::never())
             ->method('flush');
 
         $this->userService->deactivateUser($user);
@@ -122,6 +128,9 @@ class UserServiceTest extends TestCase
         self::assertSame($shouldHaveActiveRoleAfterward, $user->hasRole('ROLE_ACTIVE_USER'));
     }
 
+    /**
+     * @param string[] $roles
+     */
     #[DataProvider('activateUserProvider')]
     public function testActivateUserOnlyChangesUsersWithoutActiveRole(array $roles, bool $shouldActivate): void
     {
@@ -129,11 +138,11 @@ class UserServiceTest extends TestCase
         $user->setRoles($roles);
 
         $this->entityManager
-            ->expects($shouldActivate ? $this->once() : $this->never())
+            ->expects($shouldActivate ? self::once() : self::never())
             ->method('persist')
             ->with($user);
         $this->entityManager
-            ->expects($shouldActivate ? $this->once() : $this->never())
+            ->expects($shouldActivate ? self::once() : self::never())
             ->method('flush');
 
         $this->userService->activateUser($user);
@@ -145,6 +154,9 @@ class UserServiceTest extends TestCase
 
     #region DataProviders
 
+    /**
+     * @return array<string, array{int, User[]}>
+     */
     public static function findUsersToIndexProvider(): array
     {
         return [
@@ -153,6 +165,9 @@ class UserServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string, array{string, string}>
+     */
     public static function addUserProvider(): array
     {
         return [
@@ -161,6 +176,9 @@ class UserServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string, array{string[], bool, bool}>
+     */
     public static function deactivateUserProvider(): array
     {
         return [
@@ -170,6 +188,9 @@ class UserServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string, array{string[], bool}>
+     */
     public static function activateUserProvider(): array
     {
         return [

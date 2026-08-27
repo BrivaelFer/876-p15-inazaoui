@@ -84,7 +84,7 @@ class MediaFixtures extends Fixture implements DependentFixtureInterface
         ];
 
         foreach ($directories as $directory) {
-            foreach (glob($directory . '*') ?: [] as $file) {
+            foreach (glob($directory . '*') !== false ? glob($directory . '*') : [] as $file) {
                 if (is_file($file) && basename($file) !== '.gitignore') {
                     unlink($file);
                 }

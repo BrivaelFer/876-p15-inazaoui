@@ -37,10 +37,13 @@ class MediaEntityTest extends TestCase
         self::assertSame($file, $media->getFile());
     }
 
+    /**
+     * @return array<string, array{User, Album, string, string, File, int|null}>
+     */
     public static function mediaProvider(): array
     {
         return [
-            'uploaded image' => [
+            'uploaded_image' => [
                 new User(),
                 new Album(),
                 '/uploads/test.jpg',
@@ -48,7 +51,7 @@ class MediaEntityTest extends TestCase
                 new File(__FILE__),
                 null,
             ],
-            'another image' => [
+            'another_image' => [
                 new User(),
                 new Album(),
                 '/uploads/portrait.jpg',

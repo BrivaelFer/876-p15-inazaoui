@@ -35,24 +35,29 @@ class AlbumServiceTest extends TestCase
 
     #region Tests
 
+    /**
+     * @param Album $album
+     * @param Media[] $medias
+     * @return void
+     */
     #[DataProvider('deleteAlbumProvider')]
     public function testDeleteAlbumDeletesItsMediaAndAlbum(Album $album, array $medias): void
     {
         $this->mediaRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('findBy')
             ->with(['album' => $album])
             ->willReturn($medias);
 
         $deletedMedias = [];
         $this->mediaService
-            ->expects($this->exactly(count($medias)))
+            ->expects(self::exactly(count($medias)))
             ->method('deleteMedia')
             ->willReturnCallback(function (Media $media, bool $flush) use (&$deletedMedias): void {
                 $deletedMedias[] = [$media, $flush];
             });
-        $this->entityManager->expects($this->once())->method('remove')->with($album);
-        $this->entityManager->expects($this->once())->method('flush');
+        $this->entityManager->expects(self::once())->method('remove')->with($album);
+        $this->entityManager->expects(self::once())->method('flush');
 
         $this->albumService->deleteAlbum($album);
 
@@ -66,6 +71,9 @@ class AlbumServiceTest extends TestCase
 
     #region DataProviders
 
+    /**
+     * @return array<string, array{Album, Media[]}>
+     */
     public static function deleteAlbumProvider(): array
     {
         return [

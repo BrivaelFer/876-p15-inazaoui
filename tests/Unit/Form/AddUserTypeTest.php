@@ -33,6 +33,9 @@ class AddUserTypeTest extends KernelTestCase
         self::assertSame($label, $config->getOption('label'));
     }
 
+    /**
+     * @return array{description: array<string|null>, email: array<string|null>, name: string[], password: string[]}
+     */
     public static function fieldProvider(): array
     {
         return [

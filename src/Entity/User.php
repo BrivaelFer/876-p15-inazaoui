@@ -27,12 +27,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
+
+    /** @var Collection<int, Media> */
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user', fetch: 'EXTRA_LAZY')]
     private Collection $medias;
 
     #[ORM\Column(nullable:true)]
     private ?string $password = null;
 
+    /** @var null|array<string> $roles */
     #[ORM\Column(nullable:true)]
     private ?array $roles = null;
 
@@ -78,11 +81,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->description = $description;
     }
 
+    /**
+     * @return Collection<int, Media>
+     */
     public function getMedias(): Collection
     {
         return $this->medias;
     }
 
+    /**
+     * @param Collection<int, Media> $medias
+     * @return void
+     */
     public function setMedias(Collection $medias): void
     {
         $this->medias = $medias;
@@ -110,6 +120,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->roles ?? ['ROLE_USER'];
     }
 
+    /**
+     * @param array<string> $roles
+     * @return void
+     */
     public function setRoles(array $roles): void
     {
         $this->roles = $roles;

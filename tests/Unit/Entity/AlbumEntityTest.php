@@ -19,6 +19,9 @@ class AlbumEntityTest extends TestCase
         self::assertSame($expectedId, $album->getId());
     }
 
+    /**
+     * @return array<string, array{string, null|int}>
+     */
     public static function albumProvider(): array
     {
         return [

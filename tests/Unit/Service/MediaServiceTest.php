@@ -36,7 +36,7 @@ class MediaServiceTest extends TestCase
 
     public function tearDown(): void
     {
-        foreach (glob($this->uploadFolder . '*') ?: [] as $file) {
+        foreach (glob($this->uploadFolder . '*') !== false ? glob($this->uploadFolder . '*') : [] as $file) {
             unlink($file);
         }
         rmdir($this->uploadFolder);
@@ -46,11 +46,17 @@ class MediaServiceTest extends TestCase
 
     #region Tests
 
+    /**
+     * @param int $page
+     * @param array<string, mixed> $criteria
+     * @param Media[] $medias
+     * @return void
+     */
     #[DataProvider('findIndexMediasProvider')]
     public function testFindIndexMedias(int $page, array $criteria, array $medias): void
     {
         $this->mediaRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('findBy')
             ->with($criteria, ['id' => 'ASC'], 25, 25 * ($page - 1))
             ->willReturn($medias);
@@ -58,11 +64,16 @@ class MediaServiceTest extends TestCase
         self::assertSame($medias, $this->mediaService->findIndexMedias($page, $criteria));
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     * 
+     * @return void
+     */
     #[DataProvider('mediasCountProvider')]
     public function testMediasCount(array $criteria, int $count): void
     {
         $this->mediaRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('count')
             ->with($criteria)
             ->willReturn($count);
@@ -76,17 +87,17 @@ class MediaServiceTest extends TestCase
         $media = new Media();
         $file = $this->createMock(File::class);
 
-        $file->expects($this->once())->method('guessExtension')->willReturn('jpg');
+        $file->expects(self::once())->method('guessExtension')->willReturn('jpg');
         $file
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('move')
-            ->with($this->uploadFolder, $this->callback(
+            ->with($this->uploadFolder, self::callback(
                 fn (string $path): bool => str_ends_with($path, '.jpg') && strlen(basename($path)) === 36
             ));
         $media->setFile($file);
 
-        $this->entityManager->expects($this->once())->method('persist')->with($media);
-        $this->entityManager->expects($this->once())->method('flush');
+        $this->entityManager->expects(self::once())->method('persist')->with($media);
+        $this->entityManager->expects(self::once())->method('flush');
 
         $this->mediaService->addMedia($media, $user);
 
@@ -103,9 +114,9 @@ class MediaServiceTest extends TestCase
         file_put_contents($path, 'media');
         self::assertFileExists($path);
 
-        $this->entityManager->expects($this->once())->method('remove')->with($media);
+        $this->entityManager->expects(self::once())->method('remove')->with($media);
         $this->entityManager
-            ->expects($flush ? $this->once() : $this->never())
+            ->expects($flush ? self::once() : self::never())
             ->method('flush');
 
         $this->mediaService->deleteMedia($media, $flush);
@@ -117,6 +128,9 @@ class MediaServiceTest extends TestCase
 
     #region DataProviders
 
+    /**
+     * @return array<string, array{int, array<string, mixed>, list<Media>}>
+     */
     public static function findIndexMediasProvider(): array
     {
         return [
@@ -125,6 +139,9 @@ class MediaServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string, array{array<string, mixed>, int}>
+     */
     public static function mediasCountProvider(): array
     {
         return [
@@ -133,6 +150,9 @@ class MediaServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<array<null|User>>
+     */
     public static function addMediaProvider(): array
     {
         return [
@@ -141,6 +161,9 @@ class MediaServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string, array{Media, string, bool}>
+     */
     public static function deleteMediaProvider(): array
     {
         return [
@@ -149,6 +172,9 @@ class MediaServiceTest extends TestCase
         ];
     }
 
+    /**
+     * @return array{Media, string, bool}
+     */
     private static function mediaDeletionData(string $filename, bool $flush): array
     {
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'media-service-test' . DIRECTORY_SEPARATOR . $filename;

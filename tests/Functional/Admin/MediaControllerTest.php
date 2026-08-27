@@ -140,7 +140,7 @@ class MediaControllerTest extends WebTestCase
         $form = $this->client->getCrawler()->selectButton('Ajouter')->form([
             'media[title]' => $title,
         ]);
-        $form['media[file]'] = $this->uploadedImage();
+        $form['media[file]'] = $this->uploadedImage();/** @phpstan-ignore-line */
 
         $this->client->submit($form);
 
@@ -169,7 +169,7 @@ class MediaControllerTest extends WebTestCase
             'media[user]' => $this->admin->getId(),
             'media[album]' => $album->getId()
         ]);
-        $form['media[file]'] = $this->uploadedImage();
+        $form['media[file]'] = $this->uploadedImage(); /** @phpstan-ignore-line */
 
         $this->client->submit($form);
 
@@ -188,11 +188,11 @@ class MediaControllerTest extends WebTestCase
     #[DataProvider('deleteMediaProvider')]
     public function testDeleteMedia(string $loggedUser, string $mediaOwner, bool $shouldBeDeleted): void
     {
-        $media = $this->createMedia('delete-test', $this->{$mediaOwner});
+        $media = $this->createMedia('delete-test', $this->userByName($mediaOwner));
         $mediaId = $media->getId();
         $mediaPath = $this->projectDir.'/public/'.$media->getPath();
 
-        $this->client->loginUser($this->{$loggedUser});
+        $this->client->loginUser($this->userByName($loggedUser));
         $this->client->request('GET', sprintf('/admin/media/delete/%d', $mediaId));
 
         self::assertResponseRedirects('/admin/media');
@@ -206,6 +206,9 @@ class MediaControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * @return array<string, array{string, string, bool}>
+     */
     public static function deleteMediaProvider(): array
     {
         return [
@@ -215,6 +218,9 @@ class MediaControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @param array<string> $roles
+     */
     private function createUser(string $suffix, array $roles): User
     {
         $user = new User();
@@ -227,6 +233,16 @@ class MediaControllerTest extends WebTestCase
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    private function userByName(string $name): User
+    {
+        return match ($name) {
+            'admin' => $this->admin,
+            'nonAdmin' => $this->nonAdmin,
+            'nonActiveUser' => $this->nonActiveUser,
+            default => throw new \InvalidArgumentException('Unknown test user: '.$name),
+        };
     }
 
     private function createAlbum(string $name): Album

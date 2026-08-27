@@ -10,6 +10,9 @@ use PHPUnit\Framework\TestCase;
 
 class UserEntityTest extends TestCase
 {
+    /**
+     * @param array<string> $expectedRoles
+     */
     #[DataProvider('defaultRolesProvider')]
     public function testDefaultRolesAreReturnedWhenNoRolesAreSet(array $expectedRoles): void
     {
@@ -43,6 +46,9 @@ class UserEntityTest extends TestCase
         self::assertSame($description, $user->getDescription());
     }
 
+    /**
+     * @param ArrayCollection<int, Media> $medias
+     */
     #[DataProvider('mediasProvider')]
     public function testMediasCanBeSetAndReadBack(ArrayCollection $medias): void
     {
@@ -54,6 +60,9 @@ class UserEntityTest extends TestCase
         self::assertSame($medias, $user->getMedias());
     }
 
+    /**
+     * @param array<string> $expectedRoles
+     */
     #[DataProvider('addRoleProvider')]
     public function testAddRoleWorksWhenNoRolesAreSet(string $role, array $expectedRoles): void
     {
@@ -83,6 +92,10 @@ class UserEntityTest extends TestCase
         self::assertSame($email, $user->getUserIdentifier());
     }
 
+    /**
+     * @param array<string> $roles
+     * @param array<string> $expectedRoles
+     */
     #[DataProvider('removeRoleProvider')]
     public function testRemoveRoleKeepsTheOtherRoles(array $roles, string $roleToRemove, array $expectedRoles): void
     {
@@ -96,7 +109,9 @@ class UserEntityTest extends TestCase
             self::assertContains($role, $user->getRoles());
         }
     }
-
+    /**
+     * @param array<string> $roles
+     */
     #[DataProvider('hasRoleProvider')]
     public function testHasRoleChecksTheRoleList(array $roles, string $role, bool $expectedResult): void
     {
@@ -106,6 +121,9 @@ class UserEntityTest extends TestCase
         self::assertSame($expectedResult, $user->hasRole($role));
     }
 
+    /**
+     * @return array<string, array{array<string>, string, array<string>}>
+     */
     public static function removeRoleProvider(): array
     {
         return [
@@ -117,6 +135,9 @@ class UserEntityTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string, array{array<string>}>
+     */
     public static function defaultRolesProvider(): array
     {
         return [
@@ -124,6 +145,9 @@ class UserEntityTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string, array{string, array<string>}>
+     */
     public static function addRoleProvider(): array
     {
         return [
@@ -131,6 +155,9 @@ class UserEntityTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string, array{ArrayCollection<int, Media>}>
+     */
     public static function mediasProvider(): array
     {
         return [
@@ -138,6 +165,9 @@ class UserEntityTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string,array{string, ?string, ?string}>
+     */
     public static function profileProvider(): array
     {
         return [
@@ -146,6 +176,9 @@ class UserEntityTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string,array<string>>
+     */
     public static function passwordProvider(): array
     {
         return [
@@ -154,6 +187,9 @@ class UserEntityTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string,array<string>>
+     */
     public static function identifierProvider(): array
     {
         return [
@@ -161,6 +197,9 @@ class UserEntityTest extends TestCase
         ];
     }
 
+    /**
+     * @return array<string,array{array<string>, string, bool}>
+     */
     public static function hasRoleProvider(): array
     {
         return [
