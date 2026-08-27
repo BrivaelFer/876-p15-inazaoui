@@ -27,8 +27,11 @@ class Media
     #[ORM\Column]
     private ?string $title = null;
 
-    #[Assert\Image]
-    #[Assert\File(maxSize:'2M')]
+    #[Assert\Image(
+        maxSize:'2M',
+        maxSizeMessage: 'Le ficher ne doit pas dépasser 2Mo.',
+        mimeTypesMessage: 'Le fichier doit être une image.'
+    )]
     private ?File $file = null;
 
     public function getId(): ?int
