@@ -4,13 +4,13 @@ Portfolio photographique développé avec Symfony 7.4. L'application présente l
 
 ## Pré-requis
 
-### Installation avec Docker (recommandée)
+### Installation avec Docker pour la base de données
 
 - Docker Desktop avec Docker Compose
 - Git
-- Les ports `8080`, `5432` et `9003` disponibles
+- Le port `5432` disponible
 
-L'environnement Docker fournit automatiquement PHP 8.2, Apache, PostgreSQL 15 et les extensions PHP nécessaires.
+Docker est utilisé uniquement pour exécuter PostgreSQL 15. PHP, Symfony et l'application sont exécutés localement.
 
 ### Installation locale
 
@@ -21,22 +21,17 @@ L'environnement Docker fournit automatiquement PHP 8.2, Apache, PostgreSQL 15 et
 
 ## Installation
 
-### Avec Docker
+### Démarrer PostgreSQL avec Docker
 
 Depuis la racine du projet :
 
 ```bash
-docker compose up -d --build
-docker compose exec app composer install
-docker compose exec app php bin/console doctrine:migrations:migrate -n
-docker compose exec app php bin/console doctrine:fixtures:load -n
+docker compose up -d
 ```
 
-L'application est alors disponible à l'adresse suivante :
+La base de données est alors accessible sur `localhost:5432`.
 
-<http://localhost:8080>
-
-Pour arrêter les conteneurs :
+Pour arrêter le conteneur :
 
 ```bash
 docker compose down
@@ -48,7 +43,7 @@ Pour supprimer également les données PostgreSQL :
 docker compose down -v
 ```
 
-### En local
+### Installer et lancer l'application en local
 
 1. Installer les dépendances PHP :
 
@@ -56,7 +51,7 @@ docker compose down -v
 	composer install
 	```
 
-2. Configurer `DATABASE_URL` dans `.env.local` pour pointer vers une base PostgreSQL locale.
+2. Configurer `DATABASE_URL` dans `.env.local` pour utiliser la base PostgreSQL Docker.
 
 3. Créer la base, appliquer les migrations et charger les données de démonstration :
 
@@ -71,6 +66,14 @@ docker compose down -v
 	```bash
 	symfony server:start
 	```
+
+L'application est alors disponible à l'adresse suivante :
+
+<http://localhost:8000> (<http://127.0.0.1:8000> sur Windows)
+
+### Utiliser une base PostgreSQL locale
+
+Il est également possible d'utiliser une installation locale de PostgreSQL. Dans ce cas, configurer `DATABASE_URL` dans `.env.local`, puis suivre les étapes 3 et 4 ci-dessus.
 
 ## Usage
 
@@ -91,17 +94,20 @@ Mot de passe : password
 
 ### Commandes utiles
 
-Avec Docker, préfixer les commandes Symfony par `docker compose exec app`. En installation locale, exécuter directement les commandes `php bin/console`.
+L'application étant exécutée en local, lancer directement les commandes Symfony avec `php bin/console`.
 
 ```bash
 # Vider le cache
 php bin/console cache:clear
 
 # Charger à nouveau les données de démonstration
-php bin/console doctrine:fixtures:load -n
+composer db
 
 # Lancer les tests
 php bin/phpunit
+
+# Lancer une analyse static
+vendor/bin/phpstan
 ```
 
 Pour préparer entièrement la base de test :

@@ -81,6 +81,12 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
+        "db": [
+            "php bin/console doctrine:database:drop -f --if-exists",
+            "php bin/console doctrine:database:create",
+            "php bin/console doctrine:migrations:migrate -n",
+            "php bin/console doctrine:fixtures:load -n --purge-with-truncate"
+        ],
         "db-test": [
             "php bin/console doctrine:database:drop -f --if-exists --env=test",
             "php bin/console doctrine:database:create --env=test",
