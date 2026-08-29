@@ -19,6 +19,7 @@
                     <td>{{ guest.email }}</td>
                     <td>{{ guest.name }}</td>
                     <td>
+                        <a href="{{ path('admin_user_edit', {id: guest.id}) }}" class="btn btn-primary">Modifier</a>
                         {% if guest.hasRole('ROLE_ACTIVE_USER') %}
                             <a href="{{ path('admin_user_deactivate', {id: guest.id}) }}" class="btn btn-warning">Désactiver</a>
                         {% else %}

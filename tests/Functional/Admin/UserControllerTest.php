@@ -81,7 +81,7 @@ class UserControllerTest extends WebTestCase
         string $password
     ): void {
         $this->client->request('GET', '/admin/user/add');
-        $form = $this->client->getCrawler()->selectButton('Ajouter')->form([
+        $form = $this->client->getCrawler()->selectButton('Enregistrer')->form([
             'add_user[email]' => $email,
             'add_user[name]' => $name,
             'add_user[description]' => $description,
@@ -96,7 +96,57 @@ class UserControllerTest extends WebTestCase
         ]));
     }
 
-    
+    public function testSelfEditUserRedirectsToMediaIndexAndUpdatesProfile(): void
+    {
+        $this->client->request('GET', '/admin/user/edit');
+
+        self::assertResponseIsSuccessful();
+
+        $form = $this->client->getCrawler()->selectButton('Enregistrer')->form([
+            'user[email]' => self::EMAIL_PREFIX.'self-edited@example.com',
+            'user[name]' => 'Utilisateur modifié',
+            'user[description]' => 'Description mise à jour',
+            'user[password]' => '',
+        ]);
+
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/admin/media');
+        $this->entityManager->clear();
+        $updatedUser = $this->entityManager->getRepository(User::class)->find($this->admin->getId());
+
+        self::assertNotNull($updatedUser);
+        self::assertSame(self::EMAIL_PREFIX.'self-edited@example.com', $updatedUser->getEmail());
+        self::assertSame('Utilisateur modifié', $updatedUser->getName());
+        self::assertSame('Description mise à jour', $updatedUser->getDescription());
+    }
+
+    public function testEditUserRedirectsToIndexAndUpdatesSelectedUser(): void
+    {
+        $targetUser = $this->createUser('edit-target', ['ROLE_ACTIVE_USER']);
+
+        $this->client->request('GET', sprintf('/admin/user/%d/edit', $targetUser->getId()));
+
+        self::assertResponseIsSuccessful();
+
+        $form = $this->client->getCrawler()->selectButton('Enregistrer')->form([
+            'user[email]' => self::EMAIL_PREFIX.'edited-user@example.com',
+            'user[name]' => 'Utilisateur édité',
+            'user[description]' => 'Description éditée',
+            'user[password]' => '',
+        ]);
+
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/admin/user');
+        $this->entityManager->clear();
+        $updatedUser = $this->entityManager->getRepository(User::class)->find($targetUser->getId());
+
+        self::assertNotNull($updatedUser);
+        self::assertSame(self::EMAIL_PREFIX.'edited-user@example.com', $updatedUser->getEmail());
+        self::assertSame('Utilisateur édité', $updatedUser->getName());
+        self::assertSame('Description éditée', $updatedUser->getDescription());
+    }
 
     /**
      * @param array<string> $initialRoles

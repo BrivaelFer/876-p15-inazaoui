@@ -86,6 +86,41 @@ class UserServiceTest extends TestCase
         self::assertSame(['ROLE_ACTIVE_USER'], $user->getRoles());
     }
 
+    #[DataProvider('updateUserProvider')]
+    public function testUpdateUser(string $newPassword, string $hashedPassword) : void
+    {
+        $user = (new User())
+            ->setPassword($newPassword);
+
+        $this->hasher->expects(self::once())
+            ->method('hashPassword')
+            ->willReturn($hashedPassword)
+        ;
+        $this->entityManager->expects(self::once())->method('persist')->with($user);
+        $this->entityManager->expects(self::once())->method('flush');
+
+        $user->setPassword($newPassword);
+        $this->userService->updateUser($user, 'old-password');
+
+        self::assertSame($hashedPassword, $user->getPassword());
+    }
+
+    #[DataProvider('updateUserProviderKeep')]
+    public function testUpdateUserKeepsExistingPasswordWhenNewPasswordIsEmpty(string $newPassword, string $oldPassword, string $expectedPassword): void
+    {
+        $user = (new User())
+            ->setPassword($oldPassword);
+
+        $this->hasher->expects(self::never())->method('hashPassword');
+        $this->entityManager->expects(self::once())->method('persist')->with($user);
+        $this->entityManager->expects(self::once())->method('flush');
+
+        $user->setPassword($newPassword);
+        $this->userService->updateUser($user, $oldPassword);
+
+        self::assertSame($expectedPassword, $user->getPassword());
+    }
+
     public function testDeleteUserDataDeletesUserMediaWithoutFlushingThenDeletesUser(): void
     {
         $user = new User();
@@ -173,6 +208,26 @@ class UserServiceTest extends TestCase
         return [
             'plain password' => ['password', 'hashed-password'],
             'another password' => ['another-password', 'another-hash'],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function updateUserProvider(): array
+    {
+        return [
+            'password_change' => ['password', 'hash-password'],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string, string, string}>
+     */
+    public static function updateUserProviderKeep(): array
+    {
+        return [
+            'password_keep' => ['', 'old-hash', 'old-hash'],
         ];
     }
 

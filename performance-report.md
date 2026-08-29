@@ -35,7 +35,7 @@ La majorité des endpoints affichent de bonnes performances en environnement loc
 - La majorité des pages sont très rapides.
 - Les routes statiques ou simples restent sous 150 ms.
 - Les écrans de liste paginés se comportent correctement avec des temps acceptables.
-- Les requêtes SQL sont globalement faibles, ce qui indique un bon usage des repositories et de la persistance.
+- Les requêtes SQL sont globalement faibles.
 
 ### Points de vigilance
 - Les suppressions de données liées (utilisateur avec médias/images) peuvent devenir plus lourdes.

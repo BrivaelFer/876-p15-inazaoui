@@ -21,7 +21,8 @@ security:
         ROLE_ADMIN: ROLE_ACTIVE_USER
         ROLE_ACTIVE_USER: ROLE_USER
     access_control:
-        - { path: ^/admin/user, roles: ROLE_ADMIN}
+        - { path: ^/admin/user/edit, roles: ROLE_ACTIVE_USER }
+        - { path: ^/admin/user, roles: ROLE_ADMIN }
         - { path: ^/admin, roles: ROLE_ACTIVE_USER }
 
 when@test:

@@ -52,6 +52,19 @@ class UserService
         $this->entityManager->flush();
     }
 
+    public function updateUser(User $user, ?string $oldPassword): void
+    {
+        $password = $user->getPassword();
+
+        if ($password === null || $password === '') {
+            $user->setPassword($oldPassword);
+        } elseif ($password !== $oldPassword) {
+            $user->setPassword($this->hasher->hashPassword($user, $password));
+        }
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
+
     public function deleteUserData(User $user): void
     {
         $this->removeUserMedia($user);
