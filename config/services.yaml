@@ -34,3 +34,11 @@ services:
         arguments:
             $uploadFolder: '%env(IMG_UPLOAD_FOLDER)%'
             $projectDir: '%kernel.project_dir%'
+    
+    App\Controller\HomeController:
+        arguments:
+            $adminEmail: '%env(ADMIN_EMAIL)%'
+    
+    App\DataFixtures\UserFixtures:
+        arguments:
+            $adminEmail: '%env(ADMIN_EMAIL)%'

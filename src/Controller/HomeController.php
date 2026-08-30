@@ -17,7 +17,8 @@ class HomeController extends AbstractController
     public function __construct(
         private UserRepository $userRepository,
         private MediaRepository $mediaRepository,
-        private AlbumRepository $albumRepository
+        private AlbumRepository $albumRepository,
+        private string $adminEmail
     )
     {
     }
@@ -54,7 +55,7 @@ class HomeController extends AbstractController
     {
         $albums = $this->albumRepository->findAll();
         $album = null !== $id ? $this->albumRepository->find($id) : null;
-        $user = $this->userRepository->findOneBy(['email' => 'ina@zaoui.com']);
+        $user = $this->userRepository->findOneBy(['email' => $this->adminEmail]);
 
         $medias = null !== $album
             ? $this->mediaRepository->findBy(['album' => $album])
