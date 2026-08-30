@@ -25,6 +25,8 @@ La majorité des endpoints affichent de bonnes performances en environnement loc
 | /admin/media/delete/{id} | Suppression média | <200 ms | 5 en 9 ms | 4 MiB | Bon |
 | /admin/user | Listing utilisateurs | 115–134 ms | 3 en 4,3 ms | 4 MiB | Très bon |
 | /admin/user/add | Création utilisateur | 132–200 ms (affichage), <1000 ms (submit) | 3 en 4,5 ms / 5 en 10,25 ms | 6 MiB | Bon |
+| /admin/user/edit | Édition utilisateur | 181–255 ms (affichage), 146–482 ms (submit) | 1 en 2,2 ms / 4 en 5,2 ms | 6 MiB | Bon |
+| /admin/user/{id}/edit | Édition utilisateur par identifiant | 149–249 ms (affichage), <300 ms (submit) | 2 en 3,2 ms / 5 en 6,6 ms | 6 MiB | Bon |
 | /admin/user/{id}/delete | Suppression utilisateur | <200 ms | 56 en 41,6 ms | 6 MiB | Moyen |
 | /admin/user/{id}/deactivate | Désactivation | <100 ms | 5 en 6 ms | 4 MiB | Très bon |
 | /admin/user/{id}/activate | Activation | <100 ms | 5 en 6 ms | 4 MiB | Très bon |
@@ -321,7 +323,57 @@ La majorité des endpoints affichent de bonnes performances en environnement loc
 
 ---
 
-## 16) GET /admin/user/{id}/delete
+## 16) GET /admin/user/edit
+### Route : admin_user_self_edit
+### Type : Back office / édition utilisateur
+### Analyse
+- La route d’édition de l'utilisateur connecter reste stable et dans des temps acceptables.
+- Le chargement du formulaire et la soumission sont rapides, avec un coût SQL limité
+
+### Résultat observé
+#### Affichage
+- Temps : 181–255 ms
+- SQL : 1 en 2,2 ms
+- Mémoire : 6 MiB
+
+#### Soumission
+- Temps : <300 ms
+- SQL : 4 en 5,2 ms
+- Mémoire : 6 MiB
+
+- Verdict : Bon
+
+### Recommandation
+- Vérifier le formulaire et les validations côté edit pour éviter des temps de soumission trop variables selon les champs modifiés.
+
+---
+
+## 17) GET /admin/user/{id}/edit
+### Route : admin_user_edit
+### Type : Back office / édition utilisateur par identifiant
+### Analyse
+- La route d’édition ciblée reste stable et dans des temps acceptables.
+- Le chargement du formulaire et la soumission sont rapides, avec un coût SQL limité.
+
+### Résultat observé
+#### Affichage
+- Temps : 149–249 ms
+- SQL : 2 en 3,2 ms
+- Mémoire : 6 MiB
+
+#### Soumission
+- Temps : <300 ms
+- SQL : 5 en 6,6 ms
+- Mémoire : 6 MiB
+
+- Verdict : Bon
+
+### Recommandation
+- Maintenir le même niveau de validation et de contrôles côté formulaire pour éviter toute hausse de latence lors des mises à jour d’utilisateur.
+
+---
+
+## 18) GET /admin/user/{id}/delete
 ### Route : admin_user_delete
 ### Type : Back office / suppression utilisateur
 ### Analyse
@@ -340,7 +392,7 @@ La majorité des endpoints affichent de bonnes performances en environnement loc
 
 ---
 
-## 17) GET /admin/user/{id}/deactivate
+## 19) GET /admin/user/{id}/deactivate
 ### Route : admin_user_deactivate
 ### Type : Back office / désactivation utilisateur
 ### Analyse
@@ -354,7 +406,7 @@ La majorité des endpoints affichent de bonnes performances en environnement loc
 
 ---
 
-## 18) GET /admin/user/{id}/activate
+## 20) GET /admin/user/{id}/activate
 ### Route : admin_user_activate
 ### Type : Back office / activation utilisateur
 ### Analyse
