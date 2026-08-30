@@ -19,11 +19,16 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="">
+                                <a class="nav-link" href="{{ path('admin_user_index') }}">
                                     Invités
                                 </a>
                             </li>
                         {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('admin_user_self_edit') }}">
+                                Modifier Profile
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </nav>

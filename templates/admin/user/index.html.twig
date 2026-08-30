@@ -1,0 +1,37 @@
+{% extends 'admin.html.twig' %}
+
+{% block admin %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Invités</h1>
+        <a href="{{ path('admin_user_add') }}" class="btn btn-primary">Ajouter</a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Nom</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for guest in users %}
+                <tr>
+                    <td>{{ guest.email }}</td>
+                    <td>{{ guest.name }}</td>
+                    <td>
+                        <a href="{{ path('admin_user_edit', {id: guest.id}) }}" class="btn btn-primary">Modifier</a>
+                        {% if guest.hasRole('ROLE_ACTIVE_USER') %}
+                            <a href="{{ path('admin_user_deactivate', {id: guest.id}) }}" class="btn btn-warning">Désactiver</a>
+                        {% else %}
+                            <a href="{{ path('admin_user_activate', {id: guest.id}) }}" class="btn btn-warning">Activer</a>
+                        {% endif %}
+                        
+                        <a href="{{ path('admin_user_delete', {id: guest.id}) }}" class="btn btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {{ include("admin/pagination.html.twig", {target:'admin_user_index', page, total}) }}
+{% endblock %}

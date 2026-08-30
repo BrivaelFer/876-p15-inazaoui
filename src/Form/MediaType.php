@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/** @extends AbstractType<Media> */
 class MediaType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -25,7 +26,7 @@ class MediaType extends AbstractType
             ])
         ;
 
-        if ($options['is_admin']) {
+        if ($options['is_admin'] === true) {
             $builder
                 ->add('user', EntityType::class, [
                     'label' => 'Utilisateur',

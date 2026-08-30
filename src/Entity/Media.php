@@ -4,13 +4,14 @@ namespace App\Entity;
 
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -21,12 +22,17 @@ class Media
     private ?Album $album = null;
 
     #[ORM\Column]
-    private string $path;
+    private ?string $path = null;
 
     #[ORM\Column]
-    private string $title;
+    private ?string $title = null;
 
-    private ?UploadedFile $file = null;
+    #[Assert\Image(
+        maxSize:'2M',
+        maxSizeMessage: 'Le ficher ne doit pas dépasser 2Mo.',
+        mimeTypesMessage: 'Le fichier doit être une image.'
+    )]
+    private ?File $file = null;
 
     public function getId(): ?int
     {
@@ -43,7 +49,7 @@ class Media
         $this->user = $user;
     }
 
-    public function getPath(): string
+    public function getPath(): ?string
     {
         return $this->path;
     }
@@ -53,7 +59,7 @@ class Media
         $this->path = $path;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -63,12 +69,12 @@ class Media
         $this->title = $title;
     }
 
-    public function getFile(): ?UploadedFile
+    public function getFile(): ?File
     {
         return $this->file;
     }
 
-    public function setFile(?UploadedFile $file): void
+    public function setFile(?File $file): void
     {
         $this->file = $file;
     }

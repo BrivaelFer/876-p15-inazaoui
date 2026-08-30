@@ -25,3 +25,20 @@ services:
         tags: ['controller.service_arguments']
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\MediaService:
+        arguments:
+            $uploadFolder: '%env(IMG_UPLOAD_FOLDER)%'
+
+    App\DataFixtures\MediaFixtures:
+        arguments:
+            $uploadFolder: '%env(IMG_UPLOAD_FOLDER)%'
+            $projectDir: '%kernel.project_dir%'
+    
+    App\Controller\HomeController:
+        arguments:
+            $adminEmail: '%env(ADMIN_EMAIL)%'
+    
+    App\DataFixtures\UserFixtures:
+        arguments:
+            $adminEmail: '%env(ADMIN_EMAIL)%'

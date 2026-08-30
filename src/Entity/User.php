@@ -6,30 +6,38 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue('SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column]
-    private bool $admin = false;
-
-    #[ORM\Column]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $description;
+    private ?string $description = null;
 
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user')]
+
+    /** @var Collection<int, Media> */
+    #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user', fetch: 'EXTRA_LAZY')]
     private Collection $medias;
+
+    #[ORM\Column(nullable:true)]
+    private ?string $password = null;
+
+    /** @var null|array<string> $roles */
+    #[ORM\Column(nullable:true)]
+    private ?array $roles = null;
 
     public function __construct()
     {
@@ -73,23 +81,77 @@ class User
         $this->description = $description;
     }
 
+    /**
+     * @return Collection<int, Media>
+     */
     public function getMedias(): Collection
     {
         return $this->medias;
     }
 
+    /**
+     * @param Collection<int, Media> $medias
+     * @return void
+     */
     public function setMedias(Collection $medias): void
     {
         $this->medias = $medias;
     }
 
-    public function isAdmin(): bool
+    public function getPassword(): ?string
     {
-        return $this->admin;
+        return $this->password;
     }
 
-    public function setAdmin(bool $admin): void
+    public function setPassword(?string $password): self
     {
-        $this->admin = $admin;
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        return $this->roles ?? ['ROLE_USER'];
+    }
+
+    /**
+     * @param array<string> $roles
+     * @return void
+     */
+    public function setRoles(array $roles): void
+    {
+        $this->roles = $roles;
+    }
+
+    public function addRole(string $role): void
+    {
+        $this->roles[] = $role;
+    }
+
+    public function removeRole(string $role): void
+    {
+        foreach($this->roles as $key=>$val) {
+            if ($role === $val) {
+                unset($this->roles[$key]);
+                return;
+            }
+        }
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->getRoles(), true);
+    }
+
+    #[\Deprecated]
+    public function eraseCredentials(): void
+    {
+        // @deprecated, to be removed when upgrading to Symfony 8
     }
 }

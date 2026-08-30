@@ -1,0 +1,32 @@
+includes:
+    - vendor/phpstan/phpstan-doctrine/extension.neon
+    - vendor/phpstan/phpstan-doctrine/rules.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-symfony/rules.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
+parameters:
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+        consoleApplicationLoader: phpstan/console.php
+    scanDirectories:
+        - var/cache/dev/Symfony/Config
+    strictRules:
+        strictFunctionCalls: false
+    level: 6
+    # Parce que le code base data du siècle dernier
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - message: '#deprecat#i'
+          paths:
+              - src/*
+              - tests/*
+              - config/*
+        - identifier: doctrine.columnType
+    paths:
+        - config/
+        - src/
+        - tests/
